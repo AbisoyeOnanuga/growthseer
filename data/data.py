@@ -18,22 +18,35 @@ try:
 except Exception as e:
     print(e)
 
-db = client["crop_livestock_data"]
+
+db = client["crop-livestock-data"]
 
 collection = db["CropLivestockYield"]
-
-csv_files = ['Production_Crops_Livestock.csv']
-
-for csv_file in csv_files:
-    with open(csv_file) as f:
-
-        reader = csv.DictReader(f)
-
-        headers = reader.fieldnames
-
-        for row in reader:
-
-            document = {header: row[header] for header in headers}
-
-            collection.insert_one(document)
-
+# Load CSV file 
+with open('Production_Crops_Livestock.csv') as f:
+  reader = csv.DictReader(f)
+  
+  # Transform data
+  transformed_data = []
+  for row in reader:
+    crop_item = {
+      "year": row["Year"],
+      "item": row["Item"],
+      "element": row["Element"],
+      "unit": row["Unit"],
+      "value": row["Value"],
+      "note": row["Note"],
+      #"area_harvested": row["Value"]  
+    }
+    if row["Area"] not in transformed_data:
+      transformed_data.append({
+        "country": row["Area"], 
+        "crop-livestock": [crop_item]  
+      })
+    else:
+      for doc in transformed_data:
+        if doc["country"] == row["Area"]:
+          doc["crops-livestock"].append(crop_item)
+          
+  # Load transformed data into MongoDB 
+  collection.insert_many(transformed_data)
