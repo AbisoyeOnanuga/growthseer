@@ -3,44 +3,30 @@ import pandas as pd
 import plotly.express as px
 import taipy.gui.builder as tgb
 from taipy.gui import Gui
+from sklearn.preprocessing import StandardScaler
 
 
 data = pd.read_csv('data/Temperature-Change-on-Land.csv')
 
-# Define the start and end years
-start_year = 1961
-end_year = 2022
-
-# Initialize an empty list to store the button arguments
-button_args_list = []
-
-# Create button arguments for each year
-for year in range(start_year, end_year + 1):
-    button_args = dict(args=['Year', year], label=str(year), method='restyle')
-    button_args_list.append(button_args)
-
-# Construct the updatemenus dictionary
-updatemenus = [
-    dict(buttons=button_args_list,direction='down',pad={'r': 10, 't': 10},
-        showactive=True,x=0.1,xanchor='left',y=1.1,yanchor='top')
-]
-
 def create_pie_figure(data, group_by: str):
     grouped_data = data.groupby(group_by)['Value'].sum().reset_index()
     grouped_data['Area'] = grouped_data['Area'].round(2)
-    fig = px.pie(grouped_data, names=group_by, values='Value', title=f"temperature change by {group_by}", hole=0.3)
+    fig = px.pie(grouped_data, names=group_by, values='Value', title=f"Temperature Change by {group_by}", hole=0.3)
     return fig
 
 def create_bar_figure(data, group_by: str):
-    temperature_over_time = data.groupby(group_by)['_id'].sum().reset_index()
-    fig = px.bar(temperature_over_time, x=group_by, y='value', title='Temperature Trends Over Time', color='value')
+    temperature_over_time = data.groupby(group_by)['Area'].sum().reset_index()
+    fig = px.bar(temperature_over_time, x=group_by, y='Value', title='Temperature Trends Over Time', color='Value')
     return fig
 
 def create_change_by_country_map(data):
-    temperature_change = data.groupby(['element', 'year']).agg({'value': 'sum'}).reset_index() 
-    fig = px.scatter_geo(temperature_change, locationmode='country names', locations='_id', 
-                        size='value', color='value', text='_id', hover_name='_id', projection='natural earth')
-    fig.update_layout(title_text='Temperature Change by Country',title_x=0.5,updatemenus= updatemenus)
+    temperature_change = data.groupby(['Area', 'Year', 'Element']).agg({'Value': 'sum'}).reset_index() 
+    fig = px.choropleth(temperature_change, locationmode='country names', locations='Area', 
+                         color='Value', projection='natural earth', template='plotly')
+    fig.update_layout(title={'text': "Temperature Change by Country", 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
+                      legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+                      margin={"r": 0, "t": 0, "l": 0, "b": 0})
+        
     return fig
 
 
@@ -91,7 +77,7 @@ with tgb.Page() as page:
         tgb.chart(figure="{fig_gender_perc}")
         tgb.chart(figure="{fig_customer_type_perc}")'''
 
-    tgb.table("{temperature}")
+    tgb.table("{data}")
 
 
 
