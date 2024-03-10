@@ -1,53 +1,33 @@
-from pymongo.mongo_client import MongoClient
-import csv
-import os
-from dotenv import load_dotenv
+import pandas as pd
+import pycountry_convert as pc
 
-load_dotenv()
-username = os.getenv('MONGO_USER')
-password = os.getenv('MONGO_PASSWORD')
+import chardet
 
-uri = "mongodb+srv://username:password@cluster0.yrqjzc6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-client = MongoClient(uri)
+# Detect the encoding of the file
+with open('Production_Crops_Livestock.csv', 'rb') as file:
+    print(chardet.detect(file.read()))
+    
+# Function to map country to continent
+def country_to_continent(country_name):
+    try:
+        country_alpha2 = pc.country_name_to_country_alpha2(country_name)
+        country_continent_code = pc.country_alpha2_to_continent_code(country_alpha2)
+        country_continent_name = pc.convert_continent_code_to_continent_name(country_continent_code)
+        return country_continent_name
+    except:
+        return "Unknown"  # For countries not found in the package
 
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
+# Load the dataset
+df = pd.read_csv('Production_Crops_Livestock.csv')
 
+# Filter the DataFrame for the years 2013-2022
+df = df[df['Year'].between(2013, 2022)]
 
-db = client["pesticide-data"]
+# Map 'Area' to 'Continent'
+df['Continent'] = df['Area'].apply(country_to_continent)
 
-collection = db["PesticideUse"]
-# Load CSV file 
-with open('Pesticides-Use.csv') as f:
-  reader = csv.DictReader(f)
-  
-  # Transform data
-  transformed_data = []
-  for row in reader:
-    temperature_item = {
-      "element": row["Element"],
-      "item": row["Item"],
-      "year": row["Year"],
-      "unit": row["Unit"],
-      "value": row["Value"],
-      #"item": row["Item"],
-      "flag": row["Flag"],
-      "flag description": row["Flag Description"],
-      #"area_harvested": row["Value"]
-    }
-    if row["Area"] not in transformed_data:
-      transformed_data.append({
-        "country": row["Area"], 
-        "pesticide-use": [temperature_item]  
-      })
-    else:
-      for doc in transformed_data:
-        if doc["country"] == row["Area"]:
-          doc["temperature-change"].appen(temperature_item)
-          
-  # Load transformed data into MongoDB 
-  collection.insert_many(transformed_data)
+# Group by 'Continent' and save to separate CSV files
+for continent, data in df.groupby('Continent'):
+    filename = f'{continent}_Production_Crops_Livestock.csv'
+    data.to_csv(filename, index=False)
+    print(f'Saved {filename}')
