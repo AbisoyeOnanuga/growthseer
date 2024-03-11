@@ -23,22 +23,22 @@ def normalize_units(unit, value):
 
 # Function to categorize items based on keywords
 def categorize_items(item):
-    crops_primary_keywords = ["Cereals", "Citrus", "Fibre", "Fruit", "Linseed", "Pulses", "Roots", "Sugar", "Treenuts", "Vegetables", "Apricots", "Almonds", "Nuts", "Watermelons", "Tomatoes", "vegetables", "nuts", "beans", "Persimmons", "in shell", "Pears", "Apples", "Millet", "Hazelnuts", "Garlic", "Grapes", "Currants", "Cucumbers", "Cranberries", "Peppers", "Cherries", "Carrots", "Chestnuts", "Melons", "Cabbages", "Barley", "Asparagus", "Cauliflowers", "Mushrooms", "Nutmeg", "Onions", "Oranges", "Pepper", "Plantain", "Pumpkins", "Rape or colza", "Raspberries", "seed", "Sorghum", "Strawberries", "Tangerines", "Tea", "Vanilla, raw", "Wheat", "Oilcrops", "Cassava", "Eggplants", "Buckwheat", "berries, raw"]
+    crops_primary_keywords = ["Cereals", "Citrus", "Fibre", "Fruit", "Linseed", "Pulses", "Roots", "Sugar", "Treenuts", "Vegetables", "Apricots", "Almonds", "Nuts", "Watermelons", "Tomatoes", "vegetables", "nuts", "beans", "Persimmons", "in shell", "Pears", "Apples", "Millet", "Hazelnuts", "Garlic", "Grapes", "Currants", "Cucumbers", "Cranberries", "Peppers", "Cherries", "Carrots", "Chestnuts", "Melons", "Cabbages", "Barley", "Asparagus", "Cauliflowers", "Mushrooms", "Nutmeg", "Onions", "Oranges", "Pepper", "Plantain", "Pumpkins", "Rape or colza", "Raspberries", "seed", "Sorghum", "Strawberries", "Tangerines", "Tea", "Vanilla, raw", "Wheat", "Oilcrops", "Cassava", "Eggplants", "Buckwheat", "berries", "raw"]
     crops_processed_keywords = ["Beer of barley", "Cotton lint", "Cottonseed", "Margarine", "short", "Molasses", "Oil, palm", "Oil, palm kernel", "Oil, rapeseed", "Oil, safflower", "Oil, sesame", "Oil, soybean", "Oil, sunflower", "Palm kernels", "sugar (centrifugal only)", "Wine", "Rice", "wool"]
     live_animals_keywords = ["Animals live", "Asses", "Beehives", "Bees", "Buffaloes", "Buffalo", "Camelids", "Camels", "Cattle", "Chickens", "Ducks", "Geese", "Goats", "Horses", "Mules", "Pigeons", "Pigs", "Rabbits", "Rodents", "Sheep", "Turkeys", "Birds"]
-    livestock_primary_keywords = ["Beeswax", "beeswax", "Eggs", "eggs", "Hides", "hides", "Honey", "honey", "Meat", "meat", "Milk", "milk", "Offals", "offal", "Silk-worm", "Skins", "Snails", "Wool"]
-    livestock_processed_keywords = ["Butter", "Cheese", "Cream", "Ghee", "ghee", "Lard", "Milk products", "milk products", "Silk", "silk", "Tallow", "tallow", "Whey", "whey", "Yoghurt", "yoghurt", "Beeswax", "fat", ""]
+    livestock_primary_keywords = ["Beeswax", "beeswax", "Eggs", "eggs", "Hides", "hides", "Honey", "honey", "Meat", "meat", "Milk", "milk", "Offals", "offal", "Silk-worm", "Skins", "Snails"]
+    livestock_processed_keywords = ["Butter", "Cheese", "Cream", "Ghee", "ghee", "Lard", "Milk products", "milk products", "Silk", "silk", "Tallow", "tallow", "Whey", "whey", "Yoghurt", "yoghurt", "Beeswax", "fat"]
 
     if any(keyword.lower() in item.lower() for keyword in crops_primary_keywords):
         return "Crops Primary"
     elif any(keyword.lower() in item.lower() for keyword in crops_processed_keywords):
         return "Crops Processed"
+    elif any(keyword.lower() in item.lower() for keyword in livestock_processed_keywords):
+        return "Livestock Processed"
     elif any(keyword.lower() in item.lower() for keyword in live_animals_keywords):
         return "Live Animals"
     elif any(keyword.lower() in item.lower() for keyword in livestock_primary_keywords):
         return "Livestock Primary"
-    elif any(keyword.lower() in item.lower() for keyword in livestock_processed_keywords):
-        return "Livestock Processed"
     else:
         return "Other"
 
