@@ -40,6 +40,7 @@ Want to install _GrowthSeer_? Check out our [`INSTALLATION.md`](INSTALLATION.md)
 
 ## Help
 One of the following named colorscales:
+``` 
 ['aggrnyl', 'agsunset', 'algae', 'amp', 'armyrose', 'balance',
     'blackbody', 'bluered', 'blues', 'blugrn', 'bluyl', 'brbg',
     'brwnyl', 'bugn', 'bupu', 'burg', 'burgyl', 'cividis', 'curl',
@@ -54,5 +55,6 @@ One of the following named colorscales:
     'spectral', 'speed', 'sunset', 'sunsetdark', 'teal', 'tealgrn',
     'tealrose', 'tempo', 'temps', 'thermal', 'tropic', 'turbid',
     'turbo', 'twilight', 'viridis', 'ylgn', 'ylgnbu', 'ylorbr',
-    'ylorrd']<br/>
+    'ylorrd']
+```<br/>
 Appending '_r' to a named colorscale reverses it.
