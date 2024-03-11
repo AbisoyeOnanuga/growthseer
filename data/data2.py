@@ -1,12 +1,6 @@
 import pandas as pd
 import pycountry_convert as pc
 
-import chardet
-
-# Detect the encoding of the file
-with open('Production_Crops_Livestock.csv', 'rb') as file:
-    print(chardet.detect(file.read()))
-    
 # Function to map country to continent
 def country_to_continent(country_name):
     try:
@@ -18,7 +12,7 @@ def country_to_continent(country_name):
         return "Unknown"  # For countries not found in the package
 
 # Load the dataset
-df = pd.read_csv('Production_Crops_Livestock.csv')
+df = pd.read_csv('Production_Crops_Livestock.csv', encoding='latin1')
 
 # Filter the DataFrame for the years 2013-2022
 df = df[df['Year'].between(2013, 2022)]
