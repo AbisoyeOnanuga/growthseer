@@ -1,6 +1,16 @@
 import pandas as pd
 import pycountry_convert as pc
 
+# Function to map country to continent
+def country_to_continent(country_name):
+    try:
+        country_alpha2 = pc.country_name_to_country_alpha2(country_name)
+        country_continent_code = pc.country_alpha2_to_continent_code(country_alpha2)
+        country_continent_name = pc.convert_continent_code_to_continent_name(country_continent_code)
+        return country_continent_name
+    except:
+        return "Unknown"  # For countries not found in the package
+
 # Function to check if any keyword is in the item description
 def contains_keywords(item, keywords):
     return any(keyword in item for keyword in keywords)
@@ -30,7 +40,7 @@ def categorize_items(item):
         return "Other"
 
 # Read the dataset
-df = pd.read_csv('Production_Crops_Livestock.csv', encoding='latin1')
+df = pd.read_csv('Production_Crops_Livestock.csv', encoding='latin1', low_memory=False)
 
 # Filter the DataFrame for the years 1992-2022
 df = df[df['Year'].between(1992, 2022)]
@@ -39,9 +49,11 @@ df = df[df['Year'].between(1992, 2022)]
 df['Item Category'] = df['Item'].apply(categorize_items)
 # Normalize 'Value' column based on 'Unit'
 df['Normalized Value'] = df.apply(lambda row: normalize_units(row['Unit'], row['Value']), axis=1)
-# Drop the 'Continent' column as it's redundant
-df.drop('Continent', axis=1, inplace=True)
+# Map 'Area' to 'Continent'
+df['Continent'] = df['Area'].apply(country_to_continent)
 
-# Save the processed DataFrame to a CSV file
-df.to_csv('Processed_Production_Crops_Livestock.csv', index=False)
-print('Saved Processed_Production_Crops_Livestock.csv')
+# Group by 'Continent' and save to separate CSV files
+for continent, data in df.groupby('Continent'):
+    filename = f'{continent}_Production_Crops_Livestock.csv'
+    data.to_csv(filename, index=False)
+    print(f'Saved {filename}')
