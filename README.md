@@ -54,8 +54,7 @@ One of the following named colorscales:
     'rdgy', 'rdpu', 'rdylbu', 'rdylgn', 'redor', 'reds', 'solar',
     'spectral', 'speed', 'sunset', 'sunsetdark', 'teal', 'tealgrn',
     'tealrose', 'tempo', 'temps', 'thermal', 'tropic', 'turbid',
-    'turbo', 'twilight', 'viridis', 'ylgn', 'ylgnbu', 'ylorbr',
-    'ylorrd']
+    'turbo', 'twilight', 'viridis', 'ylgn', 'ylgnbu', 'ylorbr','ylorrd']
 ```
 <br/>
 Appending '_r' to a named colorscale reverses it.
