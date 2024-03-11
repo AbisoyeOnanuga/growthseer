@@ -83,7 +83,7 @@ def create_bar_figure(data, group_by: str):
     tick_labels = [human_readable_full(v) for v in tick_values]
     
     # Update y-axis with custom tick labels
-    fig.update_layout(yaxis=dict(tickvals=tick_values, ticktext=tick_labels), yaxis_title='Production Total(Normalized)', yaxis_automargin=True)
+    fig.update_layout(yaxis=dict(tickvals=tick_values, ticktext=tick_labels), yaxis_title='Production Total (Normalized)', yaxis_automargin=True)
     return fig
 
 custom_color_scale = [
