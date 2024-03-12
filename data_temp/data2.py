@@ -12,7 +12,7 @@ def country_to_continent(country_name):
         return "Unknown"  # For countries not found in the package
 
 # Read the dataset
-df = pd.read_csv('Temperature-Change-on-Land.csv', encoding='latin1', low_memory=False)
+df = pd.read_csv('Temperature-Change-on-Land.csv', encoding='utf-8', low_memory=False)
 
 # Filter the DataFrame for the years 1992-2022
 df = df[df['Year'].between(1961, 2022)]
@@ -27,5 +27,5 @@ for continent, data in df.groupby('Continent'):
     # Drop the 'Continent' column from the data subset
     data = data.drop('Continent', axis=1)
     filename = f'{continent}_Temperature_Change_on_Land.csv'
-    data.to_csv(filename, index=False)
+    data.to_csv(filename, index=False, encoding='utf-8')
     print(f'Saved {filename}')
