@@ -19,7 +19,12 @@ def contains_keywords(item, keywords):
 def normalize_units(unit, value):
     if '1000' in unit:
         return value * 1000
-    return value
+    elif '100' in unit:
+        return value * 100
+    elif '0.1' in unit:
+        return value * 0.1
+    else:
+        return value
 
 # Function to categorize items based on keywords
 def categorize_items(item):
@@ -52,6 +57,7 @@ df = df[df['Year'].between(1992, 2022)]
 df['Item Category'] = df['Item'].apply(categorize_items)
 # Normalize 'Value' column based on 'Unit'
 df['Normalized Value'] = df.apply(lambda row: normalize_units(row['Unit'], row['Value']), axis=1)
+
 # Map 'Area' to 'Continent'
 df['Continent'] = df['Area'].apply(country_to_continent)
 # Rename 'Area' column to 'Country'
