@@ -133,26 +133,26 @@ with tgb.Page() as page:
     tgb.chart(figure="{fig_year}")
     tgb.table("{data}")
 
-
+css_file = "style.css"
 stylekit = {
-    "color_primary": "rgb(127, 75, 182)",
-    "color_secondary": "rgb(222, 191, 255)",
-    "color_background_light": "rgb(248, 217, 217)",
-    "color_background_dark": "rgb(43, 15, 58)",
-    "color_paper_dark": "rgb(85, 34, 113)",
-    "color_paper_light": "rgb(231, 206, 206)",
-    #"font_family": "@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap')",
-    "border_radius": 21,
-    "color-contrast-dark": "rgb(248, 217, 217)",
-    "color-contrast-light": "rgb(43, 15, 58)",
-    "font-size-h1": "3.2rem",
+    "color_primary": "rgb(127, 75, 182)", # Primary color used in elements.
+    "color_secondary": "rgb(222, 191, 255)", # Accent color used to make elements stand out from others.
+    "color_background_light": "rgb(248, 217, 217)", # Background color for the light theme.
+    "color_background_dark": "rgb(43, 15, 58)", # Background color for the dark theme.
+    "color_paper_dark": "rgb(85, 34, 113)", # Elevated elements (i.e. card, header, sidebar…) background color for the dark theme.
+    "color_paper_light": "rgb(231, 206, 206)", # Elevated elements (i.e. card, header, sidebar…) background color for the light theme.
+    "font_family": "'PT Sans', sans-serif",
+    "border_radius": "21px",
+    "color-contrast-dark": "rgb(248, 217, 217)", # Contrasting elements (such as text) color for dark backgrounds
+    "color-contrast-light": "rgb(43, 15, 58)", # Contrasting elements (such as text) color for light backgrounds
+    "font-size-h1": "4rem",
     "font-size-h2": "2.2rem",
     "font-size-h3": "1.6rem",
     "font-size-h4": "1rem",
     "font-size-body": "1rem",
 }
 # Create the GUI instance
-gui = Gui(page=page)
+gui = Gui(page=page, css_file=css_file)
 
 # Run the app
 if __name__ == "__main__":
