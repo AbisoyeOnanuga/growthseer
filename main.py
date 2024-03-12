@@ -5,7 +5,7 @@ from taipy.gui import Gui, Markdown
 import pandas as pd
 import plotly.express as px
 
-file_path = 'data/Asia_Production_Crops_Livestock.csv'
+file_path = 'data_agric/Asia_Production_Crops_Livestock.csv'
     
 # Read the CSV file
 data = pd.read_csv(file_path)
