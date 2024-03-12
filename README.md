@@ -9,8 +9,11 @@ This project leverages data analytics and visualization to provide insights into
 - [Installation](#installation)
 - [Help](#help)
 
-## What is Firekit
-
+## What is GrowthSeer
+This project aims to Serve as a general data analytics platform for the agriculture industry. It includes a dashboard for interactive visualization and insights. the analytics and mapping capabilities could also support other agricultural planning and decision-making processes:
+- Tracking crop yield performance over time. 
+- Monitoring of agricultural productivity and innovation.
+- Building integrated models with other data like soil conditions, irrigation, or pesticide use to provide a bigger picture.
 [GrowthSeer](https://github.com/AbisoyeOnanuga/growthseer)
 
 ## How to run
@@ -24,18 +27,19 @@ This project leverages data analytics and visualization to provide insights into
 
 ## Directory Structure
 
-// - `root/`: Contains the demo source code.
-//  - `root/data`: Contains the application data files.
-//  - `root/pages`: Contains the page definition files.
+- `/data`: Contains the agriculture yield and climate datasets.
 - `INSTALLATION.md`: Instructions to install _GrowthSeer_.
 - `LICENSE`: MIT License.
+- `main.py`: Contains the page definition file.
 - `README.md`: Current file.
+- `requirements.txt`: Requirements file.
+- `style.css`: Custom CSS file.
 
 ## License
-MIT License [`LICENSE.md`](LICENSE.md)<br/>
+MIT License 
+This project is licensed under the MIT License - see the [`LICENSE.md`](LICENSE.md) file for details.
 Copyright 2024 GrowthSeer
-## Installation
-
+## Installing
 Want to install _GrowthSeer_? Check out our [`INSTALLATION.md`](INSTALLATION.md) file.
 
 ## Help
@@ -58,3 +62,8 @@ One of the following named colorscales:
 ```
 <br/>
 Appending '_r' to a named colorscale reverses it.
+
+## Acknowledgements
+
+- [Crop yield dataset](https://www.fao.org/faostat/en/#data/QCL)
+- [Climate dataset](https://www.fao.org/faostat/en/#data/ET)
