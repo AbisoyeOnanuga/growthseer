@@ -121,8 +121,9 @@ fig_year = create_bar_figure(data, 'Year')
 
 # Define the page content using Taipy Gui Builder
 with tgb.Page() as page:
-    tgb.text("Agriculture Data Analysis App", class_name="h1", style={"margin-left": "50px", "font-size": "130px"}),
-    tgb.text("Total Agricultural Production by Country in Asia", class_name="h3", style={"text-align": "center"}),
+    tgb.toggle(theme= True)
+    tgb.text("Agriculture Data Analysis App", class_name="h1"),
+    tgb.text("Total Agricultural Production by Country in Asia", class_name="h3"),
 
     tgb.chart(figure="{fig_map}"),
     with tgb.layout("1 1"):
@@ -131,9 +132,28 @@ with tgb.Page() as page:
 
     tgb.chart(figure="{fig_year}")
     tgb.table("{data}")
+
+
+stylekit = {
+    "color_primary": "rgb(127, 75, 182)",
+    "color_secondary": "rgb(222, 191, 255)",
+    "color_background_light": "rgb(248, 217, 217)",
+    "color_background_dark": "rgb(43, 15, 58)",
+    "color_paper_dark": "rgb(85, 34, 113)",
+    "color_paper_light": "rgb(231, 206, 206)",
+    #"font_family": "@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap')",
+    "border_radius": 21,
+    "color-contrast-dark": "rgb(248, 217, 217)",
+    "color-contrast-light": "rgb(43, 15, 58)",
+    "font-size-h1": "3.2rem",
+    "font-size-h2": "2.2rem",
+    "font-size-h3": "1.6rem",
+    "font-size-h4": "1rem",
+    "font-size-body": "1rem",
+}
 # Create the GUI instance
 gui = Gui(page=page)
 
 # Run the app
 if __name__ == "__main__":
-    gui.run(title="Agriculture Data Analysis App", port=3000)
+    gui.run(title="Agriculture Data Analysis App",stylekit=stylekit, port=3000)
