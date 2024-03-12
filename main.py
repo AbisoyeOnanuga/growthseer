@@ -126,7 +126,7 @@ with tgb.Page() as page:
     tgb.text("Total Agricultural Production by Country in Asia", class_name="h3"),
 
     tgb.chart(figure="{fig_map}"),
-    with tgb.layout("1 1"):
+    with tgb.layout("1 1", gap="1rem"):
         tgb.chart(figure="{fig_item}"),
         tgb.chart(figure="{fig_country}")
 
@@ -145,11 +145,15 @@ stylekit = {
     "border_radius": "21px",
     "color-contrast-dark": "rgb(248, 217, 217)", # Contrasting elements (such as text) color for dark backgrounds
     "color-contrast-light": "rgb(43, 15, 58)", # Contrasting elements (such as text) color for light backgrounds
-    "font-size-h1": "4rem",
-    "font-size-h2": "2.2rem",
+    "font-size-h1": "3.5rem",
+    "font-size-h2": "2rem",
     "font-size-h3": "1.6rem",
-    "font-size-h4": "1rem",
-    "font-size-body": "1rem",
+    "font-size-h4": "1.5rem",
+    "font-size-body": "1.5rem",
+    "custom-scrollbar-thumb-color-dark": "rgb(222, 191, 255)", # Light purple for thumb on dark theme
+    "custom-scrollbar-rail-color-dark": "rgb(85, 34, 113)",    # Dark purple for rail on dark theme
+    "custom-scrollbar-thumb-color-light": "rgb(127, 75, 182)", # Dark purple for thumb on light theme
+    "custom-scrollbar-rail-color-light": "rgb(231, 206, 206)",  # Light pink for rail on light theme
 }
 # Create the GUI instance
 gui = Gui(page=page, css_file=css_file)
