@@ -1,0 +1,6 @@
+pandas==2.0.3
+pycountry-convert==0.7.2
+numpy==1.25.2
+taipy.gui.builder==3.1.0
+plotly-express==0.4.1
+taipy==3.1.0

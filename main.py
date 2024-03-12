@@ -34,6 +34,16 @@ def human_readable_full(value):
     else:
         return f"{value / 1e15:.2f} Quadrillion"
 
+custom_color_scale = [
+    [1.0, 'rgb(137, 174, 255)'],     # for very large values
+    [0.5, 'rgb(118, 161, 255)'],     # for large values
+    [0.1, 'rgb(98, 148, 255)'],      # for medium-large values
+    [0.01, 'rgb(81, 136, 255)'],     # for medium values
+    [1e-3, 'rgb(66, 126, 255)'],     # for medium-small values
+    [1e-6, 'rgb(52, 116, 255)'],     # for small values
+    [1e-9, 'rgb(32, 103, 255)'],     # for very small values
+    [0, 'rgb(0, 81, 255)'],          # for the lowest value
+]
 
 # Updated create_production_by_continent_map function
 def create_production_by_country_map(data):
@@ -46,7 +56,8 @@ def create_production_by_country_map(data):
     fig.update_layout(geo=dict(scope='asia'),
                       title={'text': "Total Agricultural Production by Country in Asia", 'y': 0, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
                       legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-                      margin={"r": 0, "t": 0, "l": 0, "b": 0})
+                      margin={"r": 0, "t": 0, "l": 0, "b": 0},
+                      autosize=True)  # Set autosize to True to fill container
     return fig
 
 # Updated create_pie_figure function for other categories
@@ -104,14 +115,14 @@ def create_bar_fig(data, group_by: str):
     tick_labels = [human_readable_full(v) for v in tick_values]
     
     # Update y-axis with custom tick labels
-    fig.update_layout(yaxis=dict(tickvals=tick_values, ticktext=tick_labels), yaxis_title='Production Total (Normalized)', yaxis_automargin=True)
+    fig.update_layout(yaxis=dict(tickvals=tick_values, ticktext=tick_labels), yaxis_title='Production Total (Normalized)', yaxis_automargin=True, title={'y':0.9, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'})
     return fig
 
 def create_perc_other_fig(data, group_by: str, threshold=1):
     # Group, sum, and convert to percentage
     grouped_data = data.groupby(['Year', group_by])['Normalized Value'].sum().unstack(fill_value=0)
     percentages = grouped_data.div(grouped_data.sum(axis=1), axis=0) * 100
-    percentages = percentages.round(0)  # Round to whole numbers
+    percentages = percentages.round(3)  # Round to 3float numbers
 
     # Flatten the DataFrame and reset index
     percentages = percentages.stack().reset_index(name='Percentage')
@@ -126,24 +137,26 @@ def create_perc_other_fig(data, group_by: str, threshold=1):
     # Create the initial figure using plotly.express
     fig = px.bar(final_data, x='Year', y='Percentage', color=group_by,
                  title=f"Evolution of Agriculture Production by {group_by} over Time",
-                 labels={'Percentage': '% of Production'}, text=None)
+                 labels={'Percentage': 'Percentage(%) of Production'}, text=None)
     
-    # Modify the trace names to include the percentage values
+    # Calculate the average percentage for each group across all years
+    average_percentages = final_data.groupby(group_by)['Percentage'].mean().reset_index()
+
+    # Modify the trace names to include the average percentage values
     for trace in fig.data:
         group_name = trace.name
-        # Calculate the total percentage for the group within each year
-        trace_percentage = final_data[(final_data[group_by] == group_name) & (final_data['Year'] == trace.x[0])]['Percentage'].sum()
-        trace.name = f"{group_name} {trace_percentage:.0f}%"
+        average_percentage = average_percentages[average_percentages[group_by] == group_name]['Percentage'].iloc[0]
+        trace.name = f"{group_name} {average_percentage:.3f}%"
 
     # Update the layout to stack the bars and set the height
-    fig.update_layout(barmode='stack', height=700)
+    fig.update_layout(barmode='stack',title={'y':0.9, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'}, height=700)
     return fig
 
 def create_perc_fig(data, group_by: str):
     # Group, sum, and convert to percentage
     grouped_data = data.groupby(['Year', group_by])['Normalized Value'].sum().unstack(fill_value=0)
     percentages = grouped_data.div(grouped_data.sum(axis=1), axis=0) * 100
-    percentages = percentages.round(0)  # Round to whole numbers
+    percentages = percentages.round(3)  # Round to 3 float numbers
 
     # Flatten the DataFrame and reset index
     percentages = percentages.stack().reset_index(name='Percentage')
@@ -154,30 +167,20 @@ def create_perc_fig(data, group_by: str):
     # Create the initial figure using plotly.express
     fig = px.bar(final_data, x='Year', y='Percentage', color=group_by,
                  title=f"Evolution of Agriculture Production by {group_by} over Time",
-                 labels={'Percentage': '% of Production'}, text=None)
-    
-    # Modify the trace names to include the percentage values
+                 labels={'Percentage': 'Percentage(%) of Production'}, text=None)
+
+    # Calculate the average percentage for each group across all years
+    average_percentages = final_data.groupby(group_by)['Percentage'].mean().reset_index()
+
+    # Modify the trace names to include the average percentage values
     for trace in fig.data:
         group_name = trace.name
-        # Calculate the total percentage for the group within each year
-        trace_percentage = final_data[(final_data[group_by] == group_name) & (final_data['Year'] == trace.x[0])]['Percentage'].sum()
-        trace.name = f"{group_name} {trace_percentage:.0f}%"
+        average_percentage = average_percentages[average_percentages[group_by] == group_name]['Percentage'].iloc[0]
+        trace.name = f"{group_name} {average_percentage:.3f}%"
 
     # Update the layout to stack the bars
-    fig.update_layout(barmode='stack')
+    fig.update_layout(barmode='stack', title={'y':0.9, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'})
     return fig
-
-custom_color_scale = [
-    [1.0, 'rgb(137, 174, 255)'],     # for very large values
-    [0.5, 'rgb(118, 161, 255)'],     # for large values
-    [0.1, 'rgb(98, 148, 255)'],      # for medium-large values
-    [0.01, 'rgb(81, 136, 255)'],     # for medium values
-    [1e-3, 'rgb(66, 126, 255)'],     # for medium-small values
-    [1e-6, 'rgb(52, 116, 255)'],     # for small values
-    [1e-9, 'rgb(32, 103, 255)'],     # for very small values
-    [0, 'rgb(0, 81, 255)'],          # for the lowest value
-]
-
 
 
 # Create figures

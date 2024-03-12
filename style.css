@@ -11,8 +11,13 @@ span.h3 {
     justify-content: center;
     align-items: center;
     text-align: center;
+    margin-top: 1rem;
 }
 
-div {
+text.legendtext {
+    font-weight: bold;
+}
+
+div.taipy-chart {
     margin-top: 1rem;
 }
