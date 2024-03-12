@@ -2,4 +2,16 @@
 
 :root {
     --font-family: 'PT Sans', sans-serif;
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+h3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div {
+    margin-top: 1rem;
 }

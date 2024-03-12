@@ -114,7 +114,8 @@ def create_production_by_continent_map(data):
 # Create figures
 
 fig_map = create_production_by_continent_map(data)
-fig_item = create_pie_figure(data, 'Item Category')
+fig_item_category = create_pie_figure(data, 'Item Category')
+fig_element = create_pie_figure(data, 'Element')
 fig_country = create_pie_figure_country(data, 'Country')
 
 fig_year = create_bar_figure(data, 'Year')
@@ -122,12 +123,12 @@ fig_year = create_bar_figure(data, 'Year')
 # Define the page content using Taipy Gui Builder
 with tgb.Page() as page:
     tgb.toggle(theme= True)
-    tgb.text("Agriculture Data Analysis App", class_name="h1"),
+    tgb.text("GrowthSeer", class_name="h1"),
     tgb.text("Total Agricultural Production by Country in Asia", class_name="h3"),
 
     tgb.chart(figure="{fig_map}"),
     with tgb.layout("1 1", gap="1rem"):
-        tgb.chart(figure="{fig_item}"),
+        tgb.chart(figure="{fig_item_category}"),
         tgb.chart(figure="{fig_country}")
 
     tgb.chart(figure="{fig_year}")
@@ -160,4 +161,4 @@ gui = Gui(page=page, css_file=css_file)
 
 # Run the app
 if __name__ == "__main__":
-    gui.run(title="Agriculture Data Analysis App",stylekit=stylekit, port=3000)
+    gui.run(title="GrowthSeer",stylekit=stylekit, port=3000)
