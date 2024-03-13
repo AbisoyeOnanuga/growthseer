@@ -52,7 +52,7 @@ def create_production_by_country_map(data):
     # Create a choropleth map
     fig = px.choropleth(country_production, locations="Country", locationmode='country names',
                         color="Normalized Value", hover_name="Country", labels={'Country':'Country'},
-                        hover_name="Country", hover_data=["Production", "Element"],  # Additional info in hover tooltip
+                        hover_data=["Element", "Normalized Value"],  # Additional info in hover tooltip
                         animation_frame="Year",
                         title='Total Agricultural Production by Country in Asia', color_continuous_scale=custom_color_scale)
     fig.update_layout(geo=dict(scope='asia'),
