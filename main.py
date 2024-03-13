@@ -48,11 +48,10 @@ custom_color_scale = [
 # Updated create_production_by_continent_map function
 def create_production_by_country_map(data):
     # Group data by 'Country' and sum the 'Normalized Value' for production
-    country_production = data[data['Element'] == 'Production'].groupby('Country')['Normalized Value'].sum().reset_index()
+    country_production = data[data['Element'] == 'Production'].groupby(['Country', 'Year'])['Normalized Value'].sum().reset_index()
     # Create a choropleth map
     fig = px.choropleth(country_production, locations="Country", locationmode='country names',
                         color="Normalized Value", hover_name="Country", labels={'Country':'Country'},
-                        animation_frame="Year",
                         title='Total Agricultural Production by Country in Asia', color_continuous_scale=custom_color_scale)
     fig.update_layout(geo=dict(scope='asia'),
                       title={'text': "Total Agricultural Production by Country in Asia", 'y': 0, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
@@ -74,7 +73,7 @@ def create_pie_fig(data, group_by: str, threshold=0.01):
     fig.update_traces(textinfo='percent+label')
     return fig
 
-def create_pie_fig_element(data, group_by: str, threshold=0.01):
+def create_pie_fig_element(data, group_by: str):
     # Group data by the specified column and sum the 'Normalized Value'
     grouped_data = data.groupby(group_by)['Normalized Value'].sum().reset_index()
     grouped_data['Readable Value'] = grouped_data['Normalized Value'].apply(human_readable_full)
@@ -232,7 +231,7 @@ with tgb.Page() as page:
     tgb.text("GrowthSeer", class_name="h1"),
     tgb.text("Total Agricultural Production by Country in Asia", class_name="h3"),
 
-    tgb.chart(figure="{fig_mapp}"),
+    tgb.chart(figure="{fig_map}"),
     tgb.chart(figure="{fig_country}"),
     with tgb.layout("1 1", gap="1rem"):
         tgb.chart(figure="{fig_item_category}"),
