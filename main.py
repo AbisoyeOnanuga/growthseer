@@ -233,17 +233,6 @@ with tgb.Page() as page:
     tgb.text("GrowthSeer", class_name="h1"),
     tgb.text("Total Agricultural Production by Country in Asia", class_name="h3"),
 
-    # Taipy GUI selector for years.
-    tgb.selector(
-        value="{years}",
-        lov=[year for year in range(1992, 2023)],
-        dropdown=True,
-        multiple=False,
-        label="Select year",
-        class_name="fullwidth",
-        on_change=on_selector_year
-    )
-    
     tgb.chart(figure="{fig_mapp}"),
     tgb.chart(figure="{fig_country}"),
     with tgb.layout("1 1", gap="1rem"):
@@ -253,7 +242,7 @@ with tgb.Page() as page:
     # Taipy GUI selector for countries.
     tgb.selector(
         value="{asian_countries}",
-        lov=asian_countries,  # This is the list obtained from the previous step.
+        lov=asian_countries, # custom countries list above
         dropdown=True,
         multiple=True,
         label="Select countries",
