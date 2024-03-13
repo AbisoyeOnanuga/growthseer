@@ -51,7 +51,7 @@ def create_production_by_country_map(data):
     country_production = data[data['Element'] == 'Production'].groupby(['Country', 'Year'])['Normalized Value'].sum().reset_index()
     # Create a choropleth map
     fig = px.choropleth(country_production, locations="Country", locationmode='country names',
-                        color="Normalized Value", hover_name="Country", labels={'Country':'Country'},
+                        color="Normalized Value", hover_name="Country", labels={'Country':'Country'}, animation_frame="Year",
                         title='Total Agricultural Production by Country in Asia', color_continuous_scale=custom_color_scale)
     fig.update_layout(geo=dict(scope='asia'),
                       title={'text': "Total Agricultural Production by Country in Asia", 'y': 0, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
