@@ -229,7 +229,7 @@ def on_selector(state):
 with tgb.Page() as page:
     tgb.toggle(theme= True)
     tgb.text("GrowthSeer", class_name="h1"),
-    tgb.text("Total Agricultural Production by Country in Asia", class_name="h3"),
+    tgb.text("Total Agricultural Production by Country in Asia (1992-2022)", class_name="h3"),
 
     tgb.chart(figure="{fig_map}"),
     tgb.chart(figure="{fig_country}"),
@@ -248,7 +248,7 @@ with tgb.Page() as page:
         on_change=on_selector
     )
 
-    tgb.text("Analysis of Agricultural Production in Asia", class_name="h3")
+    tgb.text("Analysis of Agricultural Production in Asia (1992-2022)", class_name="h3")
     with tgb.layout("1 1", gap="0.5rem"):
         tgb.chart(figure="{fig_country_perc}"),
         tgb.chart(figure="{fig_item_category_perc}"),
