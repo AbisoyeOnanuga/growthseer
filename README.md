@@ -8,6 +8,7 @@ This project leverages data analytics and visualization to provide insights into
 - [License](#license)
 - [Installation](#installation)
 - [Help](#help)
+- [Acknowledgments](#acknowledgements)
 
 ## What is GrowthSeer
 This project aims to Serve as a general data analytics platform for the agriculture industry. It includes a dashboard for interactive visualization and insights. the analytics and mapping capabilities could also support other agricultural planning and decision-making processes:
