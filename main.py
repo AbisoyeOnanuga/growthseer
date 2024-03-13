@@ -52,6 +52,8 @@ def create_production_by_country_map(data):
     # Create a choropleth map
     fig = px.choropleth(country_production, locations="Country", locationmode='country names',
                         color="Normalized Value", hover_name="Country", labels={'Country':'Country'},
+                        hover_name="Country", hover_data=["Production", "Element"],  # Additional info in hover tooltip
+                        animation_frame="Year",
                         title='Total Agricultural Production by Country in Asia', color_continuous_scale=custom_color_scale)
     fig.update_layout(geo=dict(scope='asia'),
                       title={'text': "Total Agricultural Production by Country in Asia", 'y': 0, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
@@ -149,7 +151,7 @@ def create_perc_other_fig(data, group_by: str, threshold=1):
         trace.name = f"{group_name} {average_percentage:.3f}%"
 
     # Update the layout to stack the bars and set the height
-    fig.update_layout(barmode='stack',title={'y':0.9, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'}, height=700)
+    fig.update_layout(barmode='stack',title={'y':0.9, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'}, height=500)
     return fig
 
 def create_perc_fig(data, group_by: str):
@@ -179,20 +181,51 @@ def create_perc_fig(data, group_by: str):
         trace.name = f"{group_name} {average_percentage:.3f}%"
 
     # Update the layout to stack the bars
-    fig.update_layout(barmode='stack', title={'y':0.9, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'})
+    fig.update_layout(barmode='stack', title={'y':0.9, 'x':0.5, 'xanchor': 'center', 'yanchor': 'top'}, height=500)
     return fig
 
 
 # Create figures
-fig_map = create_production_by_country_map(data)
 fig_item_category = create_pie_fig(data, 'Item Category')
 fig_element = create_pie_fig_element(data, 'Element')
 fig_country = create_pie_fig_country(data, 'Country')
 fig_year = create_bar_fig(data, 'Year')
-fig_country_perc = create_perc_other_fig(data, 'Country')
-fig_item_category_perc = create_perc_fig(data, 'Item Category')
-fig_element_perc = create_perc_fig(data, 'Element')
-fig_item_perc = create_perc_other_fig(data, 'Item')
+
+fig_map = create_production_by_country_map(data)
+
+
+# list of Asian countries obtained from a reliable source.
+asian_countries = [
+    "Afghanistan", "Armenia", "Azerbaijan", "Bahrain", "Bangladesh", "Bhutan",
+    "Brunei", "Cambodia", "China", "Cyprus", "Georgia", "India", "Indonesia",
+    "Iran", "Iraq", "Israel", "Japan", "Jordan", "Kazakhstan", "Kuwait",
+    "Kyrgyzstan", "Laos", "Lebanon", "Malaysia", "Maldives", "Mongolia",
+    "Myanmar", "Nepal", "North Korea", "Oman", "Pakistan", "Palestine",
+    "Philippines", "Qatar", "Saudi Arabia", "Singapore", "South Korea",
+    "Sri Lanka", "Syria", "Taiwan", "Tajikistan", "Thailand", "Timor-Leste",
+    "Turkey", "Turkmenistan", "United Arab Emirates", "Uzbekistan", "Vietnam", "Yemen"
+]
+
+# Function to handle the on_change event and update visualizations.
+filtered_data = data.loc[
+    data["Country"].isin(asian_countries)
+]
+
+fig_country_perc = create_perc_other_fig(filtered_data, 'Country')
+fig_item_category_perc = create_perc_fig(filtered_data, 'Item Category')
+fig_element_perc = create_perc_fig(filtered_data, 'Element')
+fig_item_perc = create_perc_other_fig(filtered_data, 'Item')
+
+def on_selector(state):
+    filtered_data = state.data.loc[
+        state.data["Country"].isin(state.asian_countries)
+    ]
+
+    state.fig_country_perc = create_perc_other_fig(filtered_data, 'Country')
+    state.fig_item_category_perc = create_perc_fig(filtered_data, 'Item Category')
+    state.fig_element_perc = create_perc_fig(filtered_data, 'Element')
+    state.fig_item_perc = create_perc_other_fig(filtered_data, 'Item')
+
 
 # Define the page content using Taipy Gui Builder
 with tgb.Page() as page:
@@ -200,14 +233,36 @@ with tgb.Page() as page:
     tgb.text("GrowthSeer", class_name="h1"),
     tgb.text("Total Agricultural Production by Country in Asia", class_name="h3"),
 
-    tgb.chart(figure="{fig_map}"),
+    # Taipy GUI selector for years.
+    tgb.selector(
+        value="{years}",
+        lov=[year for year in range(1992, 2023)],
+        dropdown=True,
+        multiple=False,
+        label="Select year",
+        class_name="fullwidth",
+        on_change=on_selector_year
+    )
+    
+    tgb.chart(figure="{fig_mapp}"),
     tgb.chart(figure="{fig_country}"),
     with tgb.layout("1 1", gap="1rem"):
         tgb.chart(figure="{fig_item_category}"),
         tgb.chart(figure="{fig_element}"),
 
+    # Taipy GUI selector for countries.
+    tgb.selector(
+        value="{asian_countries}",
+        lov=asian_countries,  # This is the list obtained from the previous step.
+        dropdown=True,
+        multiple=True,
+        label="Select countries",
+        class_name="fullwidth",
+        on_change=on_selector
+    )
+
     tgb.text("Analysis of Agricultural Production in Asia", class_name="h3")
-    with tgb.layout("1", gap="1rem"):
+    with tgb.layout("1 1", gap="0.5rem"):
         tgb.chart(figure="{fig_country_perc}"),
         tgb.chart(figure="{fig_item_category_perc}"),
         tgb.chart(figure="{fig_element_perc}"),
