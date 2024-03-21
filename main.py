@@ -1,10 +1,8 @@
-import taipy as tp
 import numpy as np
 import taipy.gui.builder as tgb
-from taipy.gui import Gui, Markdown
+from taipy.gui import Gui
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
 file_path = 'data_agric/Asia_Production_Crops_Livestock.csv'
     
