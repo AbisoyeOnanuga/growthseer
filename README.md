@@ -44,7 +44,7 @@ Copyright 2024 GrowthSeer
 Want to install _GrowthSeer_? Check out our [`INSTALLATION.md`](INSTALLATION.md) file.
 
 ## Help
-One of the following named colorscales:
+For the Plotly chart, use one of the following named colorscales:
 ``` 
     ['aggrnyl', 'agsunset', 'algae', 'amp', 'armyrose', 'balance',
     'blackbody', 'bluered', 'blues', 'blugrn', 'bluyl', 'brbg',
