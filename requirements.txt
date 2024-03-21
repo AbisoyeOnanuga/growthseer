@@ -2,4 +2,3 @@ pandas==2.0.3
 numpy==1.25.2
 plotly-express==0.4.1
 taipy==3.1.0
-taipy-gui==3.1.0
