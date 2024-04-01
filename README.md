@@ -28,7 +28,8 @@ This project aims to Serve as a general data analytics platform for the agricult
 
 ## Directory Structure
 
-- `/data`: Contains the agriculture yield and climate datasets.
+- `/data_agric`: Contains the agriculture yield datasets.
+- `/data_temp`: contains the climate datasets.
 - `INSTALLATION.md`: Instructions to install _GrowthSeer_.
 - `LICENSE`: MIT License.
 - `main.py`: Contains the page definition file.
@@ -37,13 +38,16 @@ This project aims to Serve as a general data analytics platform for the agricult
 - `style.css`: Custom CSS file.
 
 ## License
+
 MIT License 
 This project is licensed under the MIT License - see the [`LICENSE.md`](LICENSE.md) file for details.
 Copyright 2024 GrowthSeer
 ## Installing
+
 Want to install _GrowthSeer_? Check out our [`INSTALLATION.md`](INSTALLATION.md) file.
 
 ## Help
+
 For the Plotly chart, use one of the following named colorscales:
 ``` 
     ['aggrnyl', 'agsunset', 'algae', 'amp', 'armyrose', 'balance',
