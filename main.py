@@ -3,11 +3,23 @@ import taipy.gui.builder as tgb
 from taipy.gui import Gui
 import pandas as pd
 import plotly.express as px
+from functools import lru_cache
 
 file_path = 'data_agric/Asia_Production_Crops_Livestock.csv'
-    
-# Read the CSV file
-data = pd.read_csv(file_path)
+
+# Read only required columns with explicit dtypes to speed up load.
+data = pd.read_csv(
+    file_path,
+    usecols=["Country", "Element", "Normalized Value", "Item Category", "Year", "Item"],
+    dtype={
+        "Country": "category",
+        "Element": "category",
+        "Item Category": "category",
+        "Item": "category",
+        "Year": "int16",
+        "Normalized Value": "float32",
+    },
+)
 
 # Function to format large numbers with abbreviations
 def human_readable_numbers(value):
@@ -46,7 +58,7 @@ custom_color_scale = [
 # Updated create_production_by_continent_map function
 def create_production_by_country_map(data):
     # Group data by 'Country' and sum the 'Normalized Value' for production
-    country_production = data[data['Element'] == 'Production'].groupby('Country')['Normalized Value'].sum().reset_index()
+    country_production = data[data['Element'] == 'Production'].groupby('Country', observed=True)['Normalized Value'].sum().reset_index()
     # Create a choropleth map
     fig = px.choropleth(country_production, locations="Country", locationmode='country names',
                         color="Normalized Value", hover_name="Country", labels={'Country':'Country'},
@@ -61,7 +73,7 @@ def create_production_by_country_map(data):
 # Updated create_pie_figure function for other categories
 def create_pie_fig(data, group_by: str, threshold=0.01):
     # Group data by the specified column and sum the 'Normalized Value'
-    grouped_data = data.groupby(group_by)['Normalized Value'].sum().reset_index()
+    grouped_data = data.groupby(group_by, observed=True)['Normalized Value'].sum().reset_index()
     grouped_data['Readable Value'] = grouped_data['Normalized Value'].apply(human_readable_full)
 
     # Create the pie chart with the filtered data
@@ -73,7 +85,7 @@ def create_pie_fig(data, group_by: str, threshold=0.01):
 
 def create_pie_fig_element(data, group_by: str):
     # Group data by the specified column and sum the 'Normalized Value'
-    grouped_data = data.groupby(group_by)['Normalized Value'].sum().reset_index()
+    grouped_data = data.groupby(group_by, observed=True)['Normalized Value'].sum().reset_index()
     grouped_data['Readable Value'] = grouped_data['Normalized Value'].apply(human_readable_full)
 
     # Create the pie chart with the filtered data
@@ -86,13 +98,14 @@ def create_pie_fig_element(data, group_by: str):
 # Updated create_pie_figure function for countries
 def create_pie_fig_country(data, group_by: str, threshold=0.01):
     # Group data by the specified column and sum the 'Normalized Value'
-    grouped_data = data.groupby(group_by)['Normalized Value'].sum().reset_index()
-    grouped_data['Readable Value'] = grouped_data['Normalized Value'].apply(human_readable_full)
+    grouped_data = data.groupby(group_by, observed=True)['Normalized Value'].sum().reset_index()
     
     # Group small categories into 'Rest'
     total_value = grouped_data['Normalized Value'].sum()
-    grouped_data['Country'] = grouped_data.apply(lambda row: row[group_by] if row['Normalized Value'] / total_value >= threshold else 'Rest', axis=1)
-    final_data = grouped_data.groupby('Country')[['Normalized Value', 'Readable Value']].sum().reset_index()
+    shares = grouped_data['Normalized Value'] / total_value
+    grouped_data['Country'] = np.where(shares >= threshold, grouped_data[group_by], 'Rest')
+    final_data = grouped_data.groupby('Country', as_index=False, observed=True)['Normalized Value'].sum()
+    final_data['Readable Value'] = final_data['Normalized Value'].apply(human_readable_full)
 
     # Create the pie chart with the filtered data
     fig = px.pie(final_data, names='Country', values='Normalized Value', title=f"Total Production by {group_by}", hole=0.2,
@@ -104,7 +117,7 @@ def create_pie_fig_country(data, group_by: str, threshold=0.01):
 # Updated create_bar_figure function
 def create_bar_fig(data, group_by: str):
     # Group data by the specified column and sum the 'Normalized Value'
-    production_over_time = data.groupby(group_by)['Normalized Value'].sum().reset_index()
+    production_over_time = data.groupby(group_by, observed=True)['Normalized Value'].sum().reset_index()
     # Create a bar chart
     fig = px.bar(production_over_time, x=group_by, y='Normalized Value', title=f'Production Trends Over Time by {group_by}', color='Normalized Value')
     # Calculate the tick values and labels
@@ -118,7 +131,7 @@ def create_bar_fig(data, group_by: str):
 
 def create_perc_other_fig(data, group_by: str, threshold=1):
     # Group, sum, and convert to percentage
-    grouped_data = data.groupby(['Year', group_by])['Normalized Value'].sum().unstack(fill_value=0)
+    grouped_data = data.groupby(['Year', group_by], observed=True)['Normalized Value'].sum().unstack(fill_value=0)
     percentages = grouped_data.div(grouped_data.sum(axis=1), axis=0) * 100
     percentages = percentages.round(3)  # Round to 3float numbers
 
@@ -126,11 +139,12 @@ def create_perc_other_fig(data, group_by: str, threshold=1):
     percentages = percentages.stack().reset_index(name='Percentage')
     
     # Group small categories into 'Other'
+    percentages[group_by] = percentages[group_by].astype(str)
     small_categories_mask = percentages['Percentage'] < threshold
     percentages.loc[small_categories_mask, group_by] = 'Rest'
     
     # Sum the 'Other' categories
-    final_data = percentages.groupby(['Year', group_by])['Percentage'].sum().reset_index()
+    final_data = percentages.groupby(['Year', group_by], observed=True)['Percentage'].sum().reset_index()
 
     # Create the initial figure using plotly.express
     fig = px.bar(final_data, x='Year', y='Percentage', color=group_by,
@@ -138,7 +152,7 @@ def create_perc_other_fig(data, group_by: str, threshold=1):
                  labels={'Percentage': 'Percentage(%) of Production'}, text=None)
     
     # Calculate the average percentage for each group across all years
-    average_percentages = final_data.groupby(group_by)['Percentage'].mean().reset_index()
+    average_percentages = final_data.groupby(group_by, observed=True)['Percentage'].mean().reset_index()
 
     # Modify the trace names to include the average percentage values
     for trace in fig.data:
@@ -152,7 +166,7 @@ def create_perc_other_fig(data, group_by: str, threshold=1):
 
 def create_perc_fig(data, group_by: str):
     # Group, sum, and convert to percentage
-    grouped_data = data.groupby(['Year', group_by])['Normalized Value'].sum().unstack(fill_value=0)
+    grouped_data = data.groupby(['Year', group_by], observed=True)['Normalized Value'].sum().unstack(fill_value=0)
     percentages = grouped_data.div(grouped_data.sum(axis=1), axis=0) * 100
     percentages = percentages.round(3)  # Round to 3 float numbers
 
@@ -160,7 +174,7 @@ def create_perc_fig(data, group_by: str):
     percentages = percentages.stack().reset_index(name='Percentage')
     
     # Sum the categories
-    final_data = percentages.groupby(['Year', group_by])['Percentage'].sum().reset_index()
+    final_data = percentages.groupby(['Year', group_by], observed=True)['Percentage'].sum().reset_index()
     
     # Create the initial figure using plotly.express
     fig = px.bar(final_data, x='Year', y='Percentage', color=group_by,
@@ -168,7 +182,7 @@ def create_perc_fig(data, group_by: str):
                  labels={'Percentage': 'Percentage(%) of Production'}, text=None)
 
     # Calculate the average percentage for each group across all years
-    average_percentages = final_data.groupby(group_by)['Percentage'].mean().reset_index()
+    average_percentages = final_data.groupby(group_by, observed=True)['Percentage'].mean().reset_index()
 
     # Modify the trace names to include the average percentage values
     for trace in fig.data:
@@ -207,20 +221,33 @@ filtered_data = data.loc[
     data["Country"].isin(asian_countries)
 ]
 
-fig_country_perc = create_perc_other_fig(filtered_data, 'Country')
-fig_item_category_perc = create_perc_fig(filtered_data, 'Item Category')
-fig_element_perc = create_perc_fig(filtered_data, 'Element')
-fig_item_perc = create_perc_other_fig(filtered_data, 'Item')
+@lru_cache(maxsize=64)
+def build_filtered_figures(selected_countries_key):
+    filtered = data.loc[data["Country"].isin(selected_countries_key)]
+    return (
+        create_perc_other_fig(filtered, 'Country'),
+        create_perc_fig(filtered, 'Item Category'),
+        create_perc_fig(filtered, 'Element'),
+        create_perc_other_fig(filtered, 'Item'),
+    )
+
+
+initial_countries_key = tuple(sorted(asian_countries))
+(
+    fig_country_perc,
+    fig_item_category_perc,
+    fig_element_perc,
+    fig_item_perc,
+) = build_filtered_figures(initial_countries_key)
 
 def on_selector(state):
-    filtered_data = state.data.loc[
-        state.data["Country"].isin(state.asian_countries)
-    ]
-
-    state.fig_country_perc = create_perc_other_fig(filtered_data, 'Country')
-    state.fig_item_category_perc = create_perc_fig(filtered_data, 'Item Category')
-    state.fig_element_perc = create_perc_fig(filtered_data, 'Element')
-    state.fig_item_perc = create_perc_other_fig(filtered_data, 'Item')
+    selected_countries_key = tuple(sorted(state.asian_countries))
+    (
+        state.fig_country_perc,
+        state.fig_item_category_perc,
+        state.fig_element_perc,
+        state.fig_item_perc,
+    ) = build_filtered_figures(selected_countries_key)
 
 
 # Define the page content using Taipy Gui Builder
