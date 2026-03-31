@@ -1,5 +1,5 @@
 # GrowthSeer
-This project leverages data analytics and visualization to provide insights into agricultural yields over time and space.
+This project leverages data analytics and visualization to provide insights into agricultural yields over time.
 
 ## Usage
 - [Usage](#usage)
@@ -11,10 +11,9 @@ This project leverages data analytics and visualization to provide insights into
 - [Acknowledgments](#acknowledgements)
 
 ## What is GrowthSeer
-This project aims to Serve as a general data analytics platform for the agriculture industry. It includes a dashboard for interactive visualization and insights. the analytics and mapping capabilities could also support other agricultural planning and decision-making processes:
+This project aims to Serve as a general data analytics platform for the agriculture. It includes a dashboard for interactive visualization and insights.:
 - Tracking crop yield performance over time. 
 - Monitoring of agricultural productivity and innovation.
-- Building integrated models with other data like soil conditions, irrigation, or pesticide use to provide a bigger picture.
 [GrowthSeer](https://github.com/AbisoyeOnanuga/growthseer)
 
 ## How to run
